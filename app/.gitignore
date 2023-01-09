@@ -1,0 +1,10 @@
+# Built application files
+*.apk
+*.aar
+*.ap_
+*.aab
+# Gradle files
+.gradle/
+/build
+# MacOS
+.DS_Store
