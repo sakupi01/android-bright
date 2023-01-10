@@ -80,6 +80,22 @@ val my_info = listOf(
     Me(R.drawable.countries,"Home: ","🇯🇵"),
 )
 
+data class Skill(val icon: Int, val name: String, val description: String)
+val skill_set = listOf(
+    Skill(R.drawable.python, "Python3", "Lorem ipsum dolor sit amet, consectetur adipiscing elit,Lorem ipsum dolor sit amet, consectetur adipiscing elit, "),
+    Skill(R.drawable.java, "Java", "Lorem ipsum dolor sit amet, consectetur adipiscing elit,Lorem ipsum dolor sit amet, consectetur adipiscing elit, "),
+    Skill(R.drawable.java_script, "JavaScript", "Lorem ipsum dolor sit amet, consectetur adipiscing elit,Lorem ipsum dolor sit amet, consectetur adipiscing elit, "),
+    Skill(R.drawable.react, "React", "Lorem ipsum dolor sit amet, consectetur adipiscing elit,Lorem ipsum dolor sit amet, consectetur adipiscing elit, "),
+    Skill(R.drawable.vue, "Vue.js", ""),
+    Skill(R.drawable.html, "HTML5", ""),
+    Skill(R.drawable.css, "CSS3", ""),
+    Skill(R.drawable.sass, "Sass", ""),
+    Skill(R.drawable.github, "Github", ""),
+    Skill(R.drawable.android_logo, "Android", "Lorem ipsum dolor sit amet, consectetur adipiscing elit,Lorem ipsum dolor sit amet, consectetur adipiscing elit, "),
+    Skill(R.drawable.docker, "Docker", ""),
+    Skill(R.drawable.plus, ",and so on!", ""),
+)
+
 
 @Composable
 fun Navigation(){
@@ -93,6 +109,8 @@ fun Navigation(){
                 }
             }
 }
+
+
 
 @Composable
 fun LanguageDetails(lang: String){
@@ -156,6 +174,7 @@ fun ExpandableCard(){
         }
     }
 }
+
 
 
 @Composable
