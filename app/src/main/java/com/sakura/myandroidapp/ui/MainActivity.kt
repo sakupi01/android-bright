@@ -14,9 +14,7 @@ import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -110,19 +108,9 @@ fun Navigation(){
             }
 }
 
-
-
-@Composable
-fun LanguageDetails(lang: String){
-    Column(
-        ) {
-        Text(text = "This is a sample." + lang)
-    }
-}
-
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ExpandableCard(){
+fun ExpandableCard(skill: Skill){
     var isClicked by remember{ mutableStateOf(false) }
 //        val rotationState by animateFloatAsState(
 //            targetValue = if (expandedState) 180f else 0f
@@ -131,6 +119,7 @@ fun ExpandableCard(){
     Card(
         modifier = Modifier
             .width(100.dp)
+            .padding(10.dp)
             .animateContentSize(
                 animationSpec = tween(
                     durationMillis = 300,
@@ -156,17 +145,14 @@ fun ExpandableCard(){
                 horizontalArrangement = Arrangement.Center
             ) {
 //                    Text(text = "title")
-                Image(painter = painterResource(id = R.drawable.coffee_beans),
+                Image(painter = painterResource(id = skill.icon),
                     contentDescription = "icon",
                     modifier = Modifier.size(60.dp)
                 )
             }
             if (isClicked) {
                 Text(
-                    text =  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
-                            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
-                            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
-                            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, ",
+                    text =  skill.description,
 //                        maxLines = 4,
 //                        overflow = TextOverflow.Ellipsis
                 )
@@ -175,7 +161,18 @@ fun ExpandableCard(){
     }
 }
 
-
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun SkillStackList(skills: List<Skill>){
+    LazyVerticalGrid(
+        cells = GridCells.Fixed(2),
+        modifier = Modifier.padding(top = 30.dp)
+    ){
+        items(skills){ skill ->
+            ExpandableCard(skill)
+        }
+    }
+}
 
 @Composable
 fun EmailButton() {
@@ -433,14 +430,14 @@ fun Profile(navController: NavController){
         Greeting()
         Spacer(Modifier.fillMaxHeight(0.2f))
         InfoCard(navController)
-        ExpandableCard()
+        SkillStackList(skill_set)
     }
 
 }
 
 @Composable
 fun Display2(navController: NavController){
-    Card() {
+    Card {
         InfoCardContent(navController)
     }
 }
