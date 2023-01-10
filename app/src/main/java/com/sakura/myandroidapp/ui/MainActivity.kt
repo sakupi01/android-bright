@@ -9,7 +9,9 @@ import android.os.Bundle
 import android.widget.Space
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.*
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,8 +23,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.rounded.ArrowForward
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ComposeCompilerApi
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,6 +39,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -93,6 +95,70 @@ fun Navigation(){
 }
 
 @Composable
+fun LanguageDetails(lang: String){
+    Column(
+        ) {
+        Text(text = "This is a sample." + lang)
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun ExpandableCard(){
+    var isClicked by remember{ mutableStateOf(false) }
+//        val rotationState by animateFloatAsState(
+//            targetValue = if (expandedState) 180f else 0f
+//        )
+
+    Card(
+        modifier = Modifier
+            .width(100.dp)
+            .animateContentSize(
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = LinearOutSlowInEasing
+                )
+            )
+            .clip(
+                RoundedCornerShape(30.dp)
+            ),
+        onClick = {
+            isClicked = !isClicked
+        }
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+//                    Text(text = "title")
+                Image(painter = painterResource(id = R.drawable.coffee_beans),
+                    contentDescription = "icon",
+                    modifier = Modifier.size(60.dp)
+                )
+            }
+            if (isClicked) {
+                Text(
+                    text =  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, ",
+//                        maxLines = 4,
+//                        overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
+    }
+}
+
+
+@Composable
 fun EmailButton() {
     val context = LocalContext.current
     Button(onClick = {
@@ -128,6 +194,7 @@ fun Greeting() {
     )
     EmailButton()
 }
+
 @Composable
 fun LinkedIn(){
     // Url handler to LinkedIn bio
@@ -154,8 +221,8 @@ fun LinkedIn(){
 fun InfoCardContent(navController: NavController){
     Column(
         modifier = Modifier
-                .fillMaxSize()
-                .background(
+            .fillMaxSize()
+            .background(
                 brush = Brush.linearGradient(
                     colors = listOf(
                         Color(206, 196, 225).copy(0.6f),
@@ -164,7 +231,7 @@ fun InfoCardContent(navController: NavController){
                     ),
                     start = Offset.Zero, end = Offset.Infinite
                 )
-                ),
+            ),
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -211,7 +278,9 @@ fun InfoCardContent(navController: NavController){
             items(my_info){el ->
                 Card(modifier = Modifier.size(90.dp)) {
                     Column(
-                        modifier = Modifier.fillMaxSize().padding(10.dp),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(10.dp),
                         verticalArrangement = Arrangement.SpaceAround,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -267,7 +336,7 @@ fun InfoCard(navController: NavController){
             .clip(
                 RoundedCornerShape(30.dp)
             )
-            .width(300.dp)
+            .width(400.dp)
             .clickable { navController.navigate("display2") },
     ) {
         Box( // To make background gradient
@@ -345,6 +414,7 @@ fun Profile(navController: NavController){
         Greeting()
         Spacer(Modifier.fillMaxHeight(0.2f))
         InfoCard(navController)
+        ExpandableCard()
     }
 
 }
