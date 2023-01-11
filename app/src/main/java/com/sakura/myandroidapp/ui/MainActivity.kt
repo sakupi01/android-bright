@@ -1,12 +1,9 @@
-package com.sakura.myandroidapp
+package com.sakura.myandroidapp.ui
 
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.media.DrmInitData
-import android.media.Image
 import android.os.Bundle
-import android.widget.Space
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.*
@@ -15,6 +12,9 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -29,22 +29,24 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import androidx.wear.compose.material.CardDefaults
+//import androidx.navigation.compose.composable
+import com.google.accompanist.navigation.animation.composable
+import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import com.sakura.myandroidapp.R
 import com.sakura.myandroidapp.ui.theme.MyAndroidAppTheme
 import me.nikhilchaudhari.library.NeuInsets
 import me.nikhilchaudhari.library.neumorphic
@@ -66,8 +68,16 @@ class MainActivity : ComponentActivity() {
 }
 
 
-
 val main_purple = Color(99, 73,222)
+val gradient = Brush.linearGradient(
+    colors = listOf(
+        Color(206, 196, 225).copy(0.6f),
+        Color(255, 255, 255),
+        Color(255, 206, 206).copy(0.4f)
+    ),
+    start = Offset.Zero, end = Offset.Infinite
+)
+val border = BorderStroke(1.dp, Color.DarkGray.copy(0.6f))
 
 data class Me(val category_icon: Int, val category_name: String, val info: String)
 val my_info = listOf(
@@ -95,81 +105,110 @@ val skill_set = listOf(
 )
 
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun Navigation(){
-    val navController = rememberNavController()
-            NavHost(navController = navController, startDestination = "display1") {
+
+    val navController = rememberAnimatedNavController()
+        AnimatedNavHost(
+            navController = navController,
+            startDestination = "display1",
+            enterTransition = {
+                slideIn { fullSize -> IntOffset(fullSize.width, 0) }
+            },
+            popEnterTransition = {
+                slideIn { fullSize -> IntOffset(-fullSize.width, 0) }
+            },
+            exitTransition = {
+                slideOut { fullSize -> IntOffset(-fullSize.width, 0) }
+            },
+            popExitTransition = {
+                slideOut { fullSize -> IntOffset(fullSize.width, 0) }
+            },
+            ) {
                 composable(route = "display1") {
-                    Display1(navController)
+                    Display1(navController, Arrangement.Center, Alignment.CenterVertically, Alignment.CenterHorizontally,
+                        Modifier
+                            .fillMaxSize()
+                            .padding(20.dp))
                 }
                 composable(route = "display2") {
-                    Display2(navController)
+                    Display2(navController, Arrangement.Center, Alignment.CenterVertically, Alignment.CenterHorizontally,
+                        Modifier
+                            .padding(20.dp)
+                            .fillMaxSize())
                 }
             }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ExpandableCard(skill: Skill){
+fun ExpandableCard(
+    skill: Skill,
+    center: Arrangement.HorizontalOrVertical,
+    centerVertically: Alignment.Vertical,
+    centerHorizontally: Alignment.Horizontal,
+    modifier: Modifier,
+    ){
     var isClicked by remember{ mutableStateOf(false) }
-//        val rotationState by animateFloatAsState(
-//            targetValue = if (expandedState) 180f else 0f
-//        )
 
     Card(
+        shape = RoundedCornerShape(20.dp),
         modifier = Modifier
             .width(100.dp)
-            .padding(10.dp)
             .animateContentSize(
                 animationSpec = tween(
                     durationMillis = 300,
                     easing = LinearOutSlowInEasing
                 )
             )
-            .clip(
-                RoundedCornerShape(30.dp)
-            ),
+        ,
         onClick = {
             isClicked = !isClicked
-        }
+        },
+        border = border,
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = modifier,
+            verticalArrangement = center,
+            horizontalAlignment = centerHorizontally
         ) {
             Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
+                verticalAlignment = centerVertically,
+                horizontalArrangement = center
             ) {
 //                    Text(text = "title")
                 Image(painter = painterResource(id = skill.icon),
                     contentDescription = "icon",
-                    modifier = Modifier.size(60.dp)
+                    modifier = Modifier.size(60.dp),
+                    colorFilter = ColorFilter.tint(Color.DarkGray.copy(0.8f))
                 )
             }
             if (isClicked) {
                 Text(
                     text =  skill.description,
-//                        maxLines = 4,
-//                        overflow = TextOverflow.Ellipsis
                 )
             }
         }
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun SkillStackList(skills: List<Skill>){
+fun SkillStackList(
+    skills: List<Skill>,
+    center: Arrangement.HorizontalOrVertical,
+    centerVertically: Alignment.Vertical,
+    centerHorizontally: Alignment.Horizontal,
+    modifier: Modifier){
     LazyVerticalGrid(
-        cells = GridCells.Fixed(2),
-        modifier = Modifier.padding(top = 30.dp)
+        columns = GridCells.Fixed(2),
+        modifier = Modifier.padding(top = 30.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+
     ){
         items(skills){ skill ->
-            ExpandableCard(skill)
+            ExpandableCard(skill, center, centerVertically, centerHorizontally, modifier)
         }
     }
 }
@@ -216,157 +255,157 @@ fun LinkedIn(){
     // Url handler to LinkedIn bio
     val uriHandler = LocalUriHandler.current
     val url = "https://www.linkedin.com/in/sakura-a-96b41b243/"
-    ExtendedFloatingActionButton(
+    Button(
         onClick = { uriHandler.openUri(url) },
-        icon = {
-            Icon(
-                Icons.Filled.Favorite,
-                contentDescription = "Favorite"
+        colors = ButtonDefaults.buttonColors(Color.Transparent),
+        elevation = null
+        ){
+        Image(painter = painterResource(id = R.drawable.linkedin),
+            contentDescription = "LinkedInBio",
+            modifier = Modifier.size(20.dp),
+            colorFilter = ColorFilter.tint(Color.Black.copy(0.6f),
             )
-        },
-        backgroundColor = Color(255, 206, 206).copy(0.7f),
-        contentColor = Color.White,
-        text = { Text("LinkedIn Bio",
-            fontSize = 15.sp,
-            fontFamily = FontFamily.Serif,
-            fontWeight = FontWeight.SemiBold) }
-    )
+        )
+    }
 }
 
 @Composable
-fun InfoCardContent(navController: NavController){
+fun InfoCardContent(
+    navController: NavController,
+    center: Arrangement.HorizontalOrVertical,
+    centerVertically: Alignment.Vertical,
+    centerHorizontally: Alignment.Horizontal,
+    modifier: Modifier
+){
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                brush = Brush.linearGradient(
-                    colors = listOf(
-                        Color(206, 196, 225).copy(0.6f),
-                        Color(255, 255, 255),
-                        Color(255, 206, 206).copy(0.4f)
-                    ),
-                    start = Offset.Zero, end = Offset.Infinite
-                )
-            ),
+            .background(gradient),
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(
-            horizontalArrangement = Arrangement.Start,
-            modifier = Modifier.fillMaxWidth()
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)
         ) {
-            Button(
-                onClick = { navController.navigateUp() },
-                colors = ButtonDefaults.buttonColors(Color.Transparent),
-                elevation = null
-            ) {
-                Text(text = "< Back" , fontSize = 15.sp, color = Color.Black.copy(0.7f))
-            }
+            BackButton(navController)
+            LinkedIn()
         }
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(20.dp),
-            verticalAlignment = Alignment.Bottom,
-            modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.signeture),
-                contentDescription = "signeture",
-                modifier = Modifier.size(100.dp),
-                alpha = 0.5F
-            )
-            Image(
-                painter = painterResource(id = R.drawable.me_bw),
-                contentDescription = "Me",
-                modifier = Modifier
-                    .size(200.dp)
-                    .clip(RoundedCornerShape(15.dp)),
-                alpha = 0.8F
-            )
-        }
+
+        Images()
 
         // Whole info scope
-        LazyRow(
-            modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(20.dp)
-        ){
-            // Each info scope
-            items(my_info){el ->
-                Card(modifier = Modifier.size(90.dp)) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(10.dp),
-                        verticalArrangement = Arrangement.SpaceAround,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ){
-                            Image(painter = painterResource(id = el.category_icon),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .padding(horizontal = 5.dp)
-                                    .size(10.dp),
-                                colorFilter = ColorFilter.tint(Color.Black.copy(0.6f))
-                            )
-                            Text(text = el.category_name, color = Color.Black.copy(0.6f), fontSize = 10.sp)
-                        }
-                        Text(text = el.info, color = Color.Black.copy(0.6f),  fontSize = 10.sp)
-                    }
-                }
-            }
-        }
+        WholeInfo(center, centerVertically, centerHorizontally, modifier)
 
         // Details
-        Row(
-            horizontalArrangement = Arrangement.Start,
-            modifier = Modifier.padding(bottom = 20.dp)
-        ) {
-            Text(text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " ,
-                modifier = Modifier.padding(vertical = 5.dp, horizontal = 20.dp),
-                color = Color.Black.copy(0.6f))
-        }
+        Comment()
     }
 
 }
 
+@Composable
+fun Comment() {
+    Row(
+        horizontalArrangement = Arrangement.Start,
+        modifier = Modifier.padding(bottom = 20.dp)
+    ) {
+        Text(text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " ,
+            modifier = Modifier.padding(vertical = 5.dp, horizontal = 20.dp),
+            color = Color.Black.copy(0.6f))
+    }
+}
+
+@Composable
+fun WholeInfo(
+    center: Arrangement.HorizontalOrVertical,
+    centerVertically: Alignment.Vertical,
+    centerHorizontally: Alignment.Horizontal,
+    modifier: Modifier
+) {
+    LazyRow(
+        modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(20.dp),
+    ){
+        // Each info scope
+        items(my_info){ el ->
+            Card(modifier = Modifier.size(90.dp), border = border) {
+                Column(
+                    modifier = modifier,
+                    verticalArrangement = Arrangement.SpaceAround,
+                    horizontalAlignment = centerHorizontally
+                ) {
+                    Row(
+                        verticalAlignment = centerVertically,
+                        horizontalArrangement = center
+                    ){
+                        Image(painter = painterResource(id = el.category_icon),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .padding(horizontal = 5.dp)
+                                .size(10.dp),
+                            colorFilter = ColorFilter.tint(Color.Black.copy(0.6f))
+                        )
+                        Text(text = el.category_name, color = Color.Black.copy(0.6f), fontSize = 10.sp)
+                    }
+                    Text(text = el.info, color = Color.Black.copy(0.6f),  fontSize = 10.sp)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun Images() {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(20.dp),
+        verticalAlignment = Alignment.Bottom,
+        modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp)
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.signeture),
+            contentDescription = "signeture",
+            modifier = Modifier.size(100.dp),
+            alpha = 0.5F
+        )
+        Image(
+            painter = painterResource(id = R.drawable.me_bw),
+            contentDescription = "Me",
+            modifier = Modifier
+                .size(200.dp)
+                .clip(RoundedCornerShape(15.dp)),
+            alpha = 0.8F
+        )
+    }
+}
+
+@Composable
+fun BackButton(navController: NavController) {
+    Button(
+        onClick = { navController.navigateUp() },
+        colors = ButtonDefaults.buttonColors(Color.Transparent),
+        elevation = null
+    ) {
+        Text(text = "< Back" , fontSize = 15.sp, color = Color.Black.copy(0.7f))
+    }
+}
+
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun InfoCard(navController: NavController){
+fun NavCard(navController: NavController){
     Card(
+        shape = RoundedCornerShape(20.dp),
         modifier = Modifier
-            .neumorphic(
-                elevation = 6.dp,
-                lightShadowColor = Color.White.copy(0.7f),
-                darkShadowColor = Color.Gray.copy(0.4f),
-                neuInsets = NeuInsets(5.dp, 7.dp),
-                neuShape =
-                // Punched shape
-                Punched.Rounded(radius = 27.dp)
-            )
-            .clip(
-                RoundedCornerShape(30.dp)
-            )
             .width(400.dp)
             .clickable { navController.navigate("display2") },
+        border = border
     ) {
         Box( // To make background gradient
             modifier = Modifier
-                .background(
-                    brush = Brush.linearGradient(
-                        colors = listOf(
-                            Color(206, 196, 225),
-                            Color(255, 255, 255),
-                            Color(255, 206, 206)
-                        ),
-                        start = Offset.Zero, end = Offset.Infinite
-                    )
-                )
+                .background(gradient)
                 .padding(vertical = 20.dp, horizontal = 30.dp)
         ){
             Row(
@@ -390,15 +429,9 @@ fun MyImage() {
     Card(
         shape = RoundedCornerShape(50),
         modifier = Modifier
-            .size(150.dp)
-            .neumorphic(
-                elevation = 6.dp,
-                neuInsets = NeuInsets(5.dp, 5.dp),
-                darkShadowColor = Color.Gray.copy(0.3f),
-                neuShape =
-                Punched.Rounded(radius = 50.dp)
-            )
+            .size(160.dp)
         ,
+        border = border
     ) {
         Image(
             painter = painterResource(R.drawable.me_inhackathon),
@@ -414,41 +447,53 @@ fun MyImage() {
 }
 
 @Composable
-fun Profile(navController: NavController){
-
+fun Profile(
+    navController: NavController,
+    center: Arrangement.HorizontalOrVertical,
+    centerVertically: Alignment.Vertical,
+    centerHorizontally: Alignment.Horizontal,
+    modifier: Modifier
+    ){
     // Display Background
     Column(
-        modifier = Modifier
-            .background(Color(235, 235, 235))
-            .padding(horizontal = 25.dp, vertical = 80.dp)
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = modifier,
+        verticalArrangement = center,
+        horizontalAlignment = centerHorizontally
     ) {
         MyImage()
-        Spacer(modifier = Modifier.padding(bottom = 50.dp))
+        Spacer(modifier = Modifier.padding(bottom = 40.dp))
         Greeting()
-        Spacer(Modifier.fillMaxHeight(0.2f))
-        InfoCard(navController)
-        SkillStackList(skill_set)
+        Spacer(Modifier.fillMaxHeight(0.1f))
+        NavCard(navController)
+        SkillStackList(skill_set, center, centerVertically, centerHorizontally, modifier)
     }
 
 }
 
 @Composable
-fun Display2(navController: NavController){
-    Card {
-        InfoCardContent(navController)
-    }
+fun Display2(
+    navController: NavController,
+    center: Arrangement.HorizontalOrVertical,
+    centerVertically: Alignment.Vertical,
+    centerHorizontally: Alignment.Horizontal,
+    modifier: Modifier
+){
+      InfoCardContent(navController , center, centerVertically, centerHorizontally, modifier)
 }
 
 @Composable
-fun Display1(navController: NavController) {
+fun Display1(
+    navController: NavController,
+    center: Arrangement.HorizontalOrVertical,
+    centerVertically: Alignment.Vertical,
+    centerHorizontally: Alignment.Horizontal,
+    modifier: Modifier) {
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
+        horizontalAlignment = centerHorizontally,
+        modifier = modifier
     ) {
 
-        Profile(navController)
+        Profile(navController, center, centerVertically, centerHorizontally, modifier)
     }
 }
 
