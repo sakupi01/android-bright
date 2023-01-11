@@ -90,18 +90,18 @@ val my_info = listOf(
 
 data class Skill(val icon: Int, val name: String, val description: String)
 val skill_set = listOf(
-    Skill(R.drawable.python, "Python3", "Lorem ipsum dolor sit amet, consectetur adipiscing elit,Lorem ipsum dolor sit amet, consectetur adipiscing elit, "),
-    Skill(R.drawable.java, "Java", "Lorem ipsum dolor sit amet, consectetur adipiscing elit,Lorem ipsum dolor sit amet, consectetur adipiscing elit, "),
-    Skill(R.drawable.java_script, "JavaScript", "Lorem ipsum dolor sit amet, consectetur adipiscing elit,Lorem ipsum dolor sit amet, consectetur adipiscing elit, "),
-    Skill(R.drawable.react, "React", "Lorem ipsum dolor sit amet, consectetur adipiscing elit,Lorem ipsum dolor sit amet, consectetur adipiscing elit, "),
-    Skill(R.drawable.vue, "Vue.js", ""),
-    Skill(R.drawable.html, "HTML5", ""),
-    Skill(R.drawable.css, "CSS3", ""),
-    Skill(R.drawable.sass, "Sass", ""),
-    Skill(R.drawable.github, "Github", ""),
-    Skill(R.drawable.android_logo, "Android", "Lorem ipsum dolor sit amet, consectetur adipiscing elit,Lorem ipsum dolor sit amet, consectetur adipiscing elit, "),
-    Skill(R.drawable.docker, "Docker", ""),
-    Skill(R.drawable.plus, ",and so on!", ""),
+    Skill(R.drawable.python, "Python3", "- 2 and half years. \n I learnt and used Python3 in the Algorithm lecture. I also sometimes use to develop API."),
+    Skill(R.drawable.java, "Java", "- Over half a year. \n I learnt and used Java to achieve OOP in the lecture."),
+    Skill(R.drawable.java_script, "JavaScript", "- 2 years. \n When I develop a project, I most usually use JS. "),
+    Skill(R.drawable.react, "React", "- Half a year. \n I mainly used React in Hackathon."),
+    Skill(R.drawable.vue, "Vue.js", "- 1 year. \n The first application I developed was based on Vue.js. I won the first prize in the contest with this app."),
+    Skill(R.drawable.html, "HTML5", "- Over 2 and half a year. \n The first language I touched when I started programming."),
+    Skill(R.drawable.css, "CSS3", "- Over 2 and half a year. \n The first language I touched when I started programming."),
+    Skill(R.drawable.sass, "Sass", "- Half a year. \n After CSS3, I started coding CSS in Sass."),
+    Skill(R.drawable.github, "Github", "- 2 years. \n The most desperate version management tool when I do programming."),
+    Skill(R.drawable.android_logo, "Android", "- Less than a month. \n This is the first project that I used Jetpack."),
+    Skill(R.drawable.docker, "Docker", "- Over one and half a year. \n Most of the time when I develop applications, I use Docker to solve the environment problem."),
+    Skill(R.drawable.plus, ",and so on!", "Not only them, I also have experiences of... \n Next.js, Nuxt.js, Node.js, Firebase, GCP, AWS, Azure, Postman."),
 )
 
 
